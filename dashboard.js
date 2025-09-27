@@ -1,15 +1,18 @@
 const express = require('express');
-const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Welcome to the Discord Bot Dashboard!');
-});
+module.exports = function startDashboard(client) {
+    const app = express();
+    const port = process.env.PORT || 3000;
 
-function startDashboard() {
-  app.listen(port, () => {
-    console.log(`Dashboard running at http://localhost:${port}`);
-  });
-}
+    app.get('/', (req, res) => {
+        if (!client.user) return res.send("🤖 Bot is starting...");
+        res.send(`
+            <h1>🤖 ${client.user.tag} is online!</h1>
+            <p>Connected to ${client.guilds.cache.size} servers.</p>
+        `);
+    });
 
-module.exports = { startDashboard };
+    app.listen(port, () => {
+        console.log(`🌐 Dashboard running on http://localhost:${port}`);
+    });
+};
