@@ -1,7 +1,10 @@
 // Require the necessary Discord.js classes
 require('dotenv').config();
-
 const { Client, Events, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Partials } = require('discord.js');
+const express = require('express');
+
+const app = express();
+const port = process.env.PORT || 3000;
 
 // Create a new client instance with necessary intents
 const client = new Client({
@@ -143,3 +146,19 @@ else if (content.startsWith(',steal')) {
 
 // Log in to Discord with your client's token
 client.login(process.env.DISCORD_TOKEN);
+
+// Start the dashboard web server
+app.get('/', (req, res) => {
+    if (!client.user) {
+        return res.send("Bot is not ready yet.");
+    }
+
+    res.send(`
+        <h1>🤖 ${client.user.tag} is online!</h1>
+        <p>Connected to ${client.guilds.cache.size} servers.</p>
+    `);
+});
+
+app.listen(port, () => {
+    console.log(`🌐 Dashboard running on port ${port}`);
+});
